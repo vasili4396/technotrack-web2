@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+{% load bootstrap3 %}
+{% block content %}
+    <form action="" method="post">
+        {% bootstrap_form form show_label=False %}
+        {%  csrf_token %}
+        <input type="submit" value="Create">
+    </form>
+{% endblock %}
+{% block backward %}
+    <a href="{% url "blog:blogWithItsPosts" ident=blog.id %}">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+    </a>
+{% endblock %}

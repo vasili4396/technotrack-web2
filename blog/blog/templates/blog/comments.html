@@ -1,0 +1,19 @@
+<div id="tag_comments">
+    {% for comment in post.comments.all%}
+        <ol>
+            <em>{{forloop.counter}}. </em>
+                <strong>
+                    {{ comment.text }}
+                </strong>
+                <div>
+                    <strong>
+                    {{ comment.author }}
+                    </strong>
+                        at
+                    <strong>
+                    {{ comment.createdata }}
+                    </strong>
+                </div>
+        </ol>
+    {% endfor %}
+</div>

@@ -1,0 +1,33 @@
+{% extends "core/base.html" %}
+{% load bootstrap3 %}
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="http://alxlit.name/bootstrap-chosen/bootstrap.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="http://harvesthq.github.io/chosen/chosen.jquery.js"></script>
+    <script src="{% static "edit_blog.js" %}"></script>
+
+    <form action="" method="post">
+        {% bootstrap_field form.name show_label=False %}
+        <div class="form-group">
+            {% bootstrap_field form.category show_label=False %}
+        </div>
+        {% csrf_token %}
+        <input type="submit" value="Create">
+        <script>
+          $(function() {
+            $('#id_category').chosen({
+                placeholder_text_multiple: " Available categories"
+            });
+          });
+        </script>
+    </form>
+{% endblock %}
+{% block backward %}
+    <a href="{% url "blog:listOfBlogs"%}">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+    </a>
+{% endblock %}
