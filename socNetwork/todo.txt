@@ -1,1 +1,2 @@
-# TODO: char, events. Everything else works.
+# TODO: chat
+# TODO: hyperlinks to posts user has

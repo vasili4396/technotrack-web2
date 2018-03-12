@@ -15,3 +15,4 @@ class Post (AuthorMixin, PublicationMixin, DateTimeMixin,
                (self.get_author().first_name,
                 self.title[0:15:1],
                 )
+

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, UserManager, AbstractUser
 from Core.models import ShowMixin, EventMixin
 from Like.models import LikeMixin
+from Post.models import Post
 from Comment.models import CommentMixin
 from datetime import datetime
 
@@ -45,8 +46,6 @@ class CustomUser(AbstractUser):
     city = models.CharField(max_length=255, blank=True, null=True)
     country = models.CharField(max_length=255, blank=True, null=True)
 
-    # objects = CustomUserManager()
-
     USERNAME_FIELD = 'email'
     email = models.EmailField('email_address', unique=True, blank=False)
     REQUIRED_FIELDS = []
@@ -65,10 +64,13 @@ class CustomUser(AbstractUser):
     def get_short_name(self):
         return self.first_name
 
+    def get_posts(self):
+        return Post.objects.filter(author_id=self.id)
+
 
 class Avatar(LikeMixin, CommentMixin, ShowMixin, EventMixin):
     avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
-    user = models.OneToOneField('User.CustomUser', on_delete=models.CASCADE)
+    user = models.ForeignKey('User.CustomUser')
 
     def get_author(self):
         return self.user

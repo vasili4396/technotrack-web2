@@ -1,18 +1,35 @@
 from rest_framework import serializers
-
 from .models import CustomUser
+from Post.models import Post
+from rest_framework.generics import get_object_or_404
+from rest_framework import reverse
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    posts = serializers.HyperlinkedRelatedField(
-        many=True,
-        view_name='Post:post-detail',
-        read_only=True
-    )
+    # def get_posts(self, validated_data):
+    #     posts = Post.objects.filter(author_id=validated_data.get('id', None))
+    #     return posts.values('id')
+    #
+    # class CustomHyperLinkedField(serializers.HyperlinkedRelatedField):
+    #     def get_object(self, view_name, view_args, view_kwargs):
+    #         queryset = self
+    #         object = get_object_or_404()
+    #
+    #     class Meta:
+    #         model = Post
+
+    # post = CustomHyperLinkedField(
+    #     view_name='Post:post-detail',
+    #     read_only=True,
+    # )
     password = serializers.CharField(write_only=True)
+    email = serializers.ReadOnlyField()
 
     def create(self, validated_data):
         user = CustomUser(
+            email=validated_data.get('email', None),
+            first_name=validated_data.get('first_name', None),
+            last_name=validated_data.get('last_name', None),
             username=validated_data.get('username', None)
         )
         user.set_password(validated_data.get('password', None))
@@ -30,15 +47,23 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('url', 'id', 'username',
-                  'password', 'first_name', 'last_name',
-                  'email', 'posts'
+
+        fields = ('url', 'id', 'password', 'username',
+                  'first_name', 'last_name',
+                  'email',
                   )
-        # extra_kwargs = {
-        #     'url': {
-        #         'view_name': 'User:user-detail',
-        #     }
-        # }
+
+        extra_kwargs = {
+            'url': {
+                'view_name': 'User:customuser-detail',
+            },
+            'id': {
+                'read_only': True
+            },
+            'email': {
+                'read_only': True
+            },
+        }
 
 # from .models import CustomUser
 # from rest_framework import serializers
