@@ -18,7 +18,6 @@ def post_update(modeladmin, request, queryset):
     for obj in queryset:
         if not obj.to_show:
             obj.to_show = True
-            obj.object.__class__.objects.get(pk=obj.object_id).update(to_show=True)
             obj.save(update_fields=['to_show'])
 
 

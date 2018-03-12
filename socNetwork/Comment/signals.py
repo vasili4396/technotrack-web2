@@ -7,7 +7,10 @@ from .models import Comment
 
 @receiver(pre_save, sender=Comment)
 def to_show_before_save(instance, **kwargs):
-    instance.to_show_before_save = instance.__class__.objects.get(pk=instance.id).to_show
+    if instance.__class__.objects.filter(pk=instance.id).exists():
+        instance.to_show_before_save = instance.__class__.objects.get(pk=instance.id).to_show
+    else:
+        instance.to_show_before_save = False
 
 
 @receiver(post_save, sender=Comment)

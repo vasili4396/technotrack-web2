@@ -12,11 +12,10 @@ class PublicationMixin (models.Model):
 
 
 class AuthorMixin (models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-    # TODO: написать нормально функцию
-    # def get_author(self):
-    #     return "%s " % self.author.
+    def get_author(self):
+        return self.author
 
     class Meta:
         abstract = True
@@ -35,3 +34,15 @@ class DateTimeMixin (models.Model):
 
     class Meta:
         abstract = True
+
+
+class EventMixin(models.Model):
+    def get_title(self):
+        raise NotImplementedError
+
+    def get_author(self):
+        raise NotImplementedError
+
+    class Meta:
+        abstract = True
+

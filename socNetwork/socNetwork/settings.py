@@ -16,9 +16,6 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '2wn7jjiuj%*g225!0__k^ug1t*wl=aa2933s()-4$i+e3w^9w^'
 
@@ -26,9 +23,22 @@ SECRET_KEY = '2wn7jjiuj%*g225!0__k^ug1t*wl=aa2933s()-4$i+e3w^9w^'
 DEBUG = True
 
 AUTH_USER_MODEL = 'User.CustomUser'
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend', )
+AUTHENTICATION_BACKENDS = (
+                            'social_core.backends.vk.VKOAuth2',
+                            'social_core.backends.google.GoogleOAuth2',
+                            'social_core.backends.facebook.FacebookOAuth2',
+                            'social_core.backends.github.GithubOAuth2',
+                            'django.contrib.auth.backends.ModelBackend',
+                           )
 
 ALLOWED_HOSTS = []
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ],
+}
 
 
 # Application definition
@@ -45,7 +55,21 @@ INSTALLED_APPS = (
     'Comment.apps.CommentConfig',
     'Like.apps.LikeConfig',
     'Post.apps.PostConfig',
-    'Event'
+    'Event.apps.EventConfig',
+    'social_django',
+    'rest_framework',
+)
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -57,6 +81,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 )
 
 ROOT_URLCONF = 'socNetwork.urls'
@@ -72,6 +97,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -86,7 +113,7 @@ WSGI_APPLICATION = 'socNetwork.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'socNETdb',
+        'NAME': 'projectDB',
         'USER': 'vasiliy',
         'PASSWORD': 'aysav4396',
         'HOST': 'localhost'
@@ -112,3 +139,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+LOGIN_REDIRECT_URL = 'Core:home'
+
+SOCIAL_AUTH_GITHUB_KEY = '494e9c9bbdd314e6d420'
+SOCIAL_AUTH_GITHUB_SECRET = '0cd979f68aee41b28fc13295917f26809fe2de0b'
+SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = '6396789'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'KzFE3m93tTuCalhYMtJO'
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'Core:home'
+SOCIAL_AUTH_USER_MODEL = 'User.CustomUser'
+
+

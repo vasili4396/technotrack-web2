@@ -3,6 +3,7 @@ from .models import CustomUser, Avatar
 from django.contrib.contenttypes.admin import GenericTabularInline
 from Comment.models import Comment
 from Like.models import Like
+from django.contrib.auth.admin import UserAdmin
 
 
 class CommentInline(GenericTabularInline):
@@ -14,7 +15,7 @@ class LikeInline(GenericTabularInline):
 
 
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'last_login', 'email', 'first_name', 'last_name', 'is_admin', 'avatar')
+    list_display = ('id', 'email', 'username', 'first_name', 'last_name', 'avatar', 'last_login', 'is_staff', )
 
 
 class AvatarAdmin(admin.ModelAdmin):
