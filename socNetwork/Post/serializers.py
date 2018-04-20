@@ -1,19 +1,18 @@
 from rest_framework import serializers
-from .models import Post
+from Post.models import Post
+from User.serializers import SimpleUserSerializer
 
 
-class PostSerializer(serializers.HyperlinkedModelSerializer):
-    author = serializers.HyperlinkedRelatedField(
-        read_only=True,
-        view_name='User:customuser-detail'
-    )
+# TODO: likes and comments
+class PostSerializer(serializers.ModelSerializer):
+    author = SimpleUserSerializer(read_only=True)
 
     class Meta:
         model = Post
 
-        fields = ('url', 'author', 'title', 'created_at', 'text', 'comments_count')
-        extra_kwargs = {
-            'url': {
-                'view_name': 'Post:post-detail',
-            }
-        }
+        fields = (
+                    'url', 'author', 'title', 'created_at',
+                    'text', 'comments_count', 'likes_count',
+                 )
+
+        read_only_fields = ('comments_count', 'likes_count', )

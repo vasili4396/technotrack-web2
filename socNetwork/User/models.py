@@ -5,38 +5,14 @@ from Like.models import LikeMixin
 from Post.models import Post
 from Comment.models import CommentMixin
 from datetime import datetime
-
-
-# # TODO: BaseUser
-# class CustomUserManager(BaseUserManager):
-#     def create_superuser(self, email, is_admin, password):
-#
-#         user = self.model(
-#             email=email,
-#             is_admin=is_admin
-#         )
-#         user.set_password(password)
-#         user.save(using=self._db)
-#         return user
-#
-#     def create_user(self, username=None, email=None, password=None):
-#         now = datetime.now()
-#         if email is None:
-#             raise ValueError('The given email must be set')
-#         email = UserManager.normalize_email(email)
-#         user = self.model(email=email,
-#                           is_admin=False,
-#                           )
-#
-#         user.set_password(password)
-#         user.save(using=self._db)
-#         return user
-#
-#     # def get_by_natural_key(self, email_):
-#     #     return self.get(email=email_)
+from django.utils import six
+from django.contrib.auth.validators import ASCIIUsernameValidator, UnicodeUsernameValidator
+from django.utils.translation import ugettext_lazy as _
 
 
 class CustomUser(AbstractUser):
+    username_validator = UnicodeUsernameValidator() if six.PY3 else ASCIIUsernameValidator()
+
     gender_choices = (
                         ('M', 'male'),
                         ('F', 'female'),
@@ -45,6 +21,18 @@ class CustomUser(AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
     city = models.CharField(max_length=255, blank=True, null=True)
     country = models.CharField(max_length=255, blank=True, null=True)
+    username = models.CharField(
+        _('username'),
+        max_length=150,
+        blank=True,
+        null=True,
+        unique=True,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[username_validator],
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+    )
 
     USERNAME_FIELD = 'email'
     email = models.EmailField('email_address', unique=True, blank=False)
@@ -70,7 +58,10 @@ class CustomUser(AbstractUser):
 
 class Avatar(LikeMixin, CommentMixin, ShowMixin, EventMixin):
     avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
-    user = models.ForeignKey('User.CustomUser')
+    user = models.ForeignKey(CustomUser, related_name='avatar')
+
+    class Meta:
+        unique_together = ('avatar', 'user')
 
     def get_author(self):
         return self.user

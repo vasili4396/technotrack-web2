@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -38,12 +39,23 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ],
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    )
+}
+
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'static/build/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
 }
 
 
 # Application definition
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -58,7 +70,10 @@ INSTALLED_APPS = (
     'Event.apps.EventConfig',
     'social_django',
     'rest_framework',
-)
+    'debug_toolbar',
+    'debug_panel',
+    'webpack_loader'
+]
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
@@ -82,6 +97,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 )
 
 ROOT_URLCONF = 'socNetwork.urls'
@@ -89,7 +105,9 @@ ROOT_URLCONF = 'socNetwork.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            '{0}/templates/'.format(BASE_DIR),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -138,11 +156,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/static/build/'
+DOMAIN = 'localhost:8000/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static/build/"),
+)
+
 
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
-LOGIN_REDIRECT_URL = 'Core:home'
+LOGIN_REDIRECT_URL = 'User:user-list'
 
 SOCIAL_AUTH_GITHUB_KEY = '494e9c9bbdd314e6d420'
 SOCIAL_AUTH_GITHUB_SECRET = '0cd979f68aee41b28fc13295917f26809fe2de0b'
@@ -155,4 +178,4 @@ SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'Core:home'
 SOCIAL_AUTH_USER_MODEL = 'User.CustomUser'
 
-
+INTERNAL_IPS = '127.0.0.1'

@@ -23,6 +23,9 @@ class Comment (AuthorMixin, PublicationMixin, DateTimeMixin, LikeMixin, ShowMixi
                 self.object.__class__.objects.get(pk=self.object_id).get_author(),
                 ) + ins_text
 
+    def __str__(self):
+        return self.get_title()
+
 
 class CommentMixin (models.Model):
     comments = GenericRelation(Comment)

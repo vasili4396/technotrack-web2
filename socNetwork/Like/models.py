@@ -24,8 +24,6 @@ class Like (AuthorMixin, ShowMixin, DateTimeMixin, EventMixin):
                                       self.object.__class__.__name__.lower(),
                                       self.object.__class__.objects.get(pk=self.object_id).get_author().first_name,
                                       ) + ins_text
-    # avatar case: self.object.__class__.objects.get(pk=self.object_id).user.first_name
-    # comment, post case: self.object.__class__.objects.get(pk=self.object_id).get_author()
 
 
 class LikeMixin (models.Model):
